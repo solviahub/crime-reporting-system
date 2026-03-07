@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Crime - Crime Reporting App</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="report-page">
+        <div class="page-header">
+            <h1 data-i18n="report_crime_title">Report a Crime</h1>
+            <p data-i18n="report_crime_subtitle">Provide as much detail as possible to help us respond effectively</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="report-progress">
+            <div class="progress-step active">
+                <div class="step-number">1</div>
+                <div class="step-label" data-i18n="step_details">Crime Details</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number">2</div>
+                <div class="step-label" data-i18n="step_location">Location</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number">3</div>
+                <div class="step-label" data-i18n="step_evidence">Evidence</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number">4</div>
+                <div class="step-label" data-i18n="step_review">Review</div>
+            </div>
+        </div>
+
+        <!-- Report Form -->
+        <form id="reportForm" class="report-form" onsubmit="return handleReportSubmit(event)">
+            <!-- Step 1: Crime Details -->
+            <div class="form-step active" id="step1">
+                <div class="form-section">
+                    <h3 data-i18n="crime_details">Crime Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="crimeType" data-i18n="crime_type">Type of Crime <span class="required">*</span></label>
+                        <select id="crimeType" name="crimeType" class="form-control" required>
+                            <option value="" data-i18n="select_crime_type">Select crime type</option>
+                            <option value="theft" data-i18n="theft">Theft</option>
+                            <option value="assault" data-i18n="assault">Assault</option>
+                            <option value="vandalism" data-i18n="vandalism">Vandalism</option>
+                            <option value="burglary" data-i18n="burglary">Burglary</option>
+                            <option value="robbery" data-i18n="robbery">Robbery</option>
+                            <option value="fraud" data-i18n="fraud">Fraud</option>
+                            <option value="harassment" data-i18n="harassment">Harassment</option>
+                            <option value="drugs" data-i18n="drugs">Drug-related</option>
+                            <option value="other" data-i18n="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="crimeDate" data-i18n="date">Date <span class="required">*</span></label>
+                            <input type="date" id="crimeDate" name="crimeDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="crimeTime" data-i18n="time">Time <span class="required">*</span></label>
+                            <input type="time" id="crimeTime" name="crimeTime" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" data-i18n="description">Description <span class="required">*</span></label>
+                        <textarea id="description" name="description" rows="5" class="form-control" 
+                                  placeholder="Describe what happened in detail..." required></textarea>
+                        <small class="hint" data-i18n="description_hint">Include details like what happened, who was involved, any witnesses, etc.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suspectDescription" data-i18n="suspect_description">Suspect Description (if applicable)</label>
+                        <textarea id="suspectDescription" name="suspectDescription" rows="3" class="form-control" 
+                                  placeholder="Describe the suspect(s) - appearance, clothing, etc."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="anonymous" name="anonymous">
+                            <span class="checkmark"></span>
+                            <span data-i18n="report_anonymously">Report anonymously (your identity will be protected)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="next">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Location -->
+            <div class="form-step" id="step2">
+                <div class="form-section">
+                    <h3 data-i18n="location_details">Location Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="location" data-i18n="location">Location/Address <span class="required">*</span></label>
+                        <input type="text" id="location" name="location" class="form-control" 
+                               placeholder="Enter address or location" required>
+                    </div>
+
+                    <!-- Map for location picker -->
+                    <div class="map-container" id="locationMap"></div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="latitude" data-i18n="latitude">Latitude</label>
+                            <input type="text" id="latitude" name="latitude" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude" data-i18n="longitude">Longitude</label>
+                            <input type="text" id="longitude" name="longitude" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-secondary" onclick="getCurrentLocation()">
+                        <i class="fas fa-location-arrow"></i>
+                        <span data-i18n="use_current_location">Use my current location</span>
+                    </button>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="previous">Previous</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="next">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Evidence -->
+            <div class="form-step" id="step3">
+                <div class="form-section">
+                    <h3 data-i18n="evidence_upload">Upload Evidence</h3>
+                    
+                    <div class="file-upload-area">
+                        <div class="file-upload" id="fileUpload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h4 data-i18n="drag_drop">Drag & drop files here</h4>
+                            <p data-i18n="or">or</p>
+                            <button type="button" class="btn-secondary" onclick="document.getElementById('fileInput').click()">
+                                <span data-i18n="browse_files">Browse Files</span>
+                            </button>
+                            <input type="file" id="fileInput" multiple accept="image/*,video/*" style="display: none;">
+                            <p class="file-hint" data-i18n="file_hint">Supported: Images, Videos (Max 50MB per file)</p>
+                        </div>
+
+                        <div class="file-preview" id="filePreview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalInfo" data-i18n="additional_info">Additional Information</label>
+                        <textarea id="additionalInfo" name="additionalInfo" rows="3" class="form-control" 
+                                  placeholder="Any additional information that might help..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="previous">Previous</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()" data-i18n="next">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Review -->
+            <div class="form-step" id="step4">
+                <div class="form-section">
+                    <h3 data-i18n="review_submit">Review & Submit</h3>
+                    
+                    <div class="review-card">
+                        <h4 data-i18n="crime_details">Crime Details</h4>
+                        <div class="review-item">
+                            <span class="review-label" data-i18n="crime_type">Type:</span>
+                            <span class="review-value" id="reviewCrimeType">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label" data-i18n="date_time">Date & Time:</span>
+                            <span class="review-value" id="reviewDateTime">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label" data-i18n="description">Description:</span>
+                            <span class="review-value" id="reviewDescription">-</span>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <h4 data-i18n="location">Location</h4>
+                        <div class="review-item">
+                            <span class="review-label" data-i18n="address">Address:</span>
+                            <span class="review-value" id="reviewLocation">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label" data-i18n="coordinates">Coordinates:</span>
+                            <span class="review-value" id="reviewCoordinates">-</span>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <h4 data-i18n="evidence">Evidence</h4>
+                        <div class="review-item">
+                            <span class="review-label" data-i18n="files">Files:</span>
+                            <span class="review-value" id="reviewFiles">0 files selected</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="confirmAccuracy" required>
+                            <span class="checkmark"></span>
+                            <span data-i18n="confirm_accuracy">I confirm that the information provided is accurate to the best of my knowledge</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span class="checkmark"></span>
+                            <span data-i18n="agree_terms">I agree to the <a href="terms.html">Terms of Service</a> and understand that false reporting is a crime</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()" data-i18n="previous">Previous</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        <span data-i18n="submit_report">Submit Report</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Load our custom JavaScript files -->
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/report.js"></script>
+    
+    <!-- Page specific initialization -->
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('crimeDate');
+            if (dateInput) {
+                dateInput.value = today;
+                dateInput.max = today;
+            }
+            
+            // Set default time to current time
+            const timeInput = document.getElementById('crimeTime');
+            if (timeInput) {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                timeInput.value = `${hours}:${minutes}`;
+            }
+            
+            // Load draft if exists
+            loadDraft();
+        });
+    </script> -->
+
+    <style>
+        /* Report page specific styles */
+        .report-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--neutral);
+        }
+
+        /* Progress Steps */
+        .report-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .report-progress::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #dee2e6;
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            background: var(--white);
+            padding: 0 0.5rem;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border: 2px solid #dee2e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+            color: var(--neutral);
+            transition: all 0.3s;
+        }
+
+        .progress-step.active .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .progress-step.completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--neutral);
+        }
+
+        .progress-step.active .step-label {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Form Steps */
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .required {
+            color: var(--danger);
+            margin-left: 0.2rem;
+        }
+
+        .hint {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--neutral);
+            margin-top: 0.3rem;
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 300px;
+            margin: 1rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            margin: 1rem 0;
+        }
+
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-light);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e3f2fd;
+        }
+
+        .file-upload i {
+            font-size: 3rem;
+            color: var(--neutral);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .file-upload p {
+            margin-bottom: 1rem;
+            color: var(--neutral);
+        }
+
+        .file-hint {
+            font-size: 0.85rem;
+            color: var(--neutral);
+            margin-top: 1rem;
+        }
+
+        .file-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .preview-item img,
+        .preview-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .remove-file {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .preview-item:hover .remove-file {
+            opacity: 1;
+        }
+
+        /* Review Cards */
+        .review-card {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-card h4 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+
+        .review-item {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-label {
+            width: 120px;
+            color: var(--neutral);
+            font-weight: 500;
+        }
+
+        .review-value {
+            flex: 1;
+            color: var(--dark);
+        }
+
+        /* Form Navigation */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .report-progress {
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+            }
+
+            .report-progress::before {
+                display: none;
+            }
+
+            .review-item {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            .review-label {
+                width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-navigation button {
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+</html>

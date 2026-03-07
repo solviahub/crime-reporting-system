@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Crime Reporting App</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="profile-page">
+        <div class="page-header">
+            <h1 data-i18n="my_profile">My Profile</h1>
+            <p data-i18n="profile_subtitle">Manage your account settings and preferences</p>
+        </div>
+
+        <div class="profile-container">
+            <!-- Profile Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <img src="assets/images/default-avatar.png" alt="Profile" id="profileImage">
+                    <div class="avatar-upload">
+                        <label for="avatarUpload" class="avatar-upload-btn">
+                            <i class="fas fa-camera"></i>
+                        </label>
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="uploadAvatar()">
+                    </div>
+                </div>
+                <h2 id="displayName">John Doe</h2>
+                <p class="profile-email" id="displayEmail">john.doe@example.com</p>
+                <p class="profile-member-since" data-i18n="member_since">Member since Jan 2024</p>
+
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-value">12</span>
+                        <span class="stat-label" data-i18n="total_reports">Total Reports</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">8</span>
+                        <span class="stat-label" data-i18n="resolved">Resolved</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">4</span>
+                        <span class="stat-label" data-i18n="pending">Pending</span>
+                    </div>
+                </div>
+
+                <div class="profile-menu">
+                    <button class="profile-menu-item active" onclick="showProfileTab('personal')">
+                        <i class="fas fa-user"></i>
+                        <span data-i18n="personal_info">Personal Info</span>
+                    </button>
+                    <button class="profile-menu-item" onclick="showProfileTab('security')">
+                        <i class="fas fa-shield-alt"></i>
+                        <span data-i18n="security">Security</span>
+                    </button>
+                    <button class="profile-menu-item" onclick="showProfileTab('notifications')">
+                        <i class="fas fa-bell"></i>
+                        <span data-i18n="notifications">Notifications</span>
+                    </button>
+                    <button class="profile-menu-item" onclick="showProfileTab('privacy')">
+                        <i class="fas fa-lock"></i>
+                        <span data-i18n="privacy">Privacy</span>
+                    </button>
+                    <button class="profile-menu-item" onclick="showProfileTab('preferences')">
+                        <i class="fas fa-sliders-h"></i>
+                        <span data-i18n="preferences">Preferences</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Personal Information Tab -->
+                <div class="profile-tab active" id="personal-tab">
+                    <h3 data-i18n="personal_information">Personal Information</h3>
+                    
+                    <form id="profileForm" onsubmit="return updateProfile(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName" data-i18n="first_name">First Name</label>
+                                <input type="text" id="firstName" name="firstName" class="form-control" value="John" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName" data-i18n="last_name">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" class="form-control" value="Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" data-i18n="email">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" value="john.doe@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" data-i18n="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" value="+1 234 567 8900">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address" data-i18n="address">Address</label>
+                            <input type="text" id="address" name="address" class="form-control" value="123 Main St, City, State 12345">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dob" data-i18n="date_of_birth">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" class="form-control" value="1990-01-01">
+                        </div>
+
+                        <button type="submit" class="btn-primary" data-i18n="save_changes">Save Changes</button>
+                    </form>
+                </div>
+
+                <!-- Security Tab -->
+                <div class="profile-tab" id="security-tab">
+                    <h3 data-i18n="security_settings">Security Settings</h3>
+                    
+                    <form id="securityForm" onsubmit="return updateSecurity(event)">
+                        <div class="form-group">
+                            <label for="currentPassword" data-i18n="current_password">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword" data-i18n="new_password">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control" 
+                                   data-parsley-minlength="8" required>
+                            <small class="hint" data-i18n="password_hint">Minimum 8 characters with at least one number and one special character</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" data-i18n="confirm_password">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" 
+                                   data-parsley-equalto="#newPassword" required>
+                        </div>
+
+                        <button type="submit" class="btn-primary" data-i18n="update_password">Update Password</button>
+                    </form>
+
+                    <hr class="separator">
+
+                    <h4 data-i18n="two_factor">Two-Factor Authentication</h4>
+                    <div class="two-factor-status">
+                        <div class="status-info">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <p data-i18n="two_factor_desc">Add an extra layer of security to your account</p>
+                                <span class="status-badge disabled" data-i18n="disabled">Disabled</span>
+                            </div>
+                        </div>
+                        <button class="btn-secondary" onclick="enable2FA()" data-i18n="enable">Enable</button>
+                    </div>
+
+                    <h4 data-i18n="login_history">Login History</h4>
+                    <div class="login-history">
+                        <div class="history-item">
+                            <i class="fas fa-laptop"></i>
+                            <div class="history-details">
+                                <p>Chrome on Windows</p>
+                                <small>New York, NY • Feb 27, 2024 14:30</small>
+                            </div>
+                            <span class="current-badge" data-i18n="current">Current</span>
+                        </div>
+                        <div class="history-item">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div class="history-details">
+                                <p>Safari on iPhone</p>
+                                <small>New York, NY • Feb 26, 2024 09:15</small>
+                            </div>
+                        </div>
+                        <div class="history-item">
+                            <i class="fas fa-laptop"></i>
+                            <div class="history-details">
+                                <p>Firefox on MacOS</p>
+                                <small>New York, NY • Feb 25, 2024 18:45</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Tab -->
+                <div class="profile-tab" id="notifications-tab">
+                    <h3 data-i18n="notification_settings">Notification Settings</h3>
+                    
+                    <div class="settings-group">
+                        <h4 data-i18n="email_notifications">Email Notifications</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="report_updates">Report Updates</p>
+                                <small data-i18n="report_updates_desc">Get notified when your report status changes</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailReportUpdates" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="safety_alerts">Safety Alerts</p>
+                                <small data-i18n="safety_alerts_desc">Receive alerts about safety issues in your area</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailSafetyAlerts" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="newsletter">Newsletter</p>
+                                <small data-i18n="newsletter_desc">Receive crime prevention tips and community updates</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailNewsletter">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h4 data-i18n="push_notifications">Push Notifications</h4>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="sos_alerts">SOS Alerts</p>
+                                <small data-i18n="sos_alerts_desc">Receive SOS alerts from emergency services</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="pushSOS" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="nearby_crimes">Nearby Crimes</p>
+                                <small data-i18n="nearby_crimes_desc">Get notified about crimes reported near you</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="pushNearby">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="saveNotificationSettings()" data-i18n="save_settings">Save Settings</button>
+                </div>
+
+                <!-- Privacy Tab -->
+                <div class="profile-tab" id="privacy-tab">
+                    <h3 data-i18n="privacy_settings">Privacy Settings</h3>
+                    
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="anonymous_default">Anonymous by Default</p>
+                                <small data-i18n="anonymous_default_desc">Always submit reports anonymously unless changed</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="anonymousDefault">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="show_profile">Show Profile to Authorities</p>
+                                <small data-i18n="show_profile_desc">Allow law enforcement to see your profile when reviewing reports</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="showProfile" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="location_tracking">Location Tracking</p>
+                                <small data-i18n="location_tracking_desc">Allow app to access your location for better reporting</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="locationTracking" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <h4 data-i18n="data_management">Data Management</h4>
+                    
+                    <div class="data-actions">
+                        <button class="btn-secondary" onclick="downloadData()">
+                            <i class="fas fa-download"></i>
+                            <span data-i18n="download_data">Download My Data</span>
+                        </button>
+                        <button class="btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash"></i>
+                            <span data-i18n="delete_account">Delete Account</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preferences Tab -->
+                <div class="profile-tab" id="preferences-tab">
+                    <h3 data-i18n="app_preferences">App Preferences</h3>
+                    
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="language">Language</p>
+                                <small data-i18n="language_desc">Choose your preferred language</small>
+                            </div>
+                            <select id="languagePref" class="preference-select">
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="theme">Theme</p>
+                                <small data-i18n="theme_desc">Choose light or dark mode</small>
+                            </div>
+                            <select id="themePref" class="preference-select">
+                                <option value="light" data-i18n="light">Light</option>
+                                <option value="dark" data-i18n="dark">Dark</option>
+                                <option value="system" data-i18n="system">System Default</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <p data-i18n="items_per_page">Items Per Page</p>
+                                <small data-i18n="items_per_page_desc">Number of reports to show per page</small>
+                            </div>
+                            <select id="itemsPerPage" class="preference-select">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="savePreferences()" data-i18n="save_preferences">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal" id="deleteAccountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="confirm_delete">Delete Account</h3>
+                <button class="close-modal" onclick="hideModal('deleteAccountModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="warning-text" data-i18n="delete_warning">This action cannot be undone. All your data will be permanently deleted.</p>
+                <div class="form-group">
+                    <label for="confirmDelete" data-i18n="type_delete">Type "DELETE" to confirm</label>
+                    <input type="text" id="confirmDelete" class="form-control" placeholder="DELETE">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="hideModal('deleteAccountModal')" data-i18n="cancel">Cancel</button>
+                <button class="btn-danger" onclick="confirmDelete()" data-i18n="delete_account">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
+
+     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Load our custom JavaScript files -->
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    
+    <!-- Page specific initialization -->
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user profile
+            loadUserProfile();
+            
+            // Check URL hash for tab
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                showProfileTab(hash);
+            }
+        });
+    </script> -->
+
+    <style>
+        /* Profile page specific styles */
+        .profile-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--neutral);
+        }
+
+        /* Profile Container */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        /* Profile Sidebar */
+        .profile-sidebar {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+
+        .avatar-upload-btn {
+            width: 35px;
+            height: 35px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .avatar-upload-btn:hover {
+            background: var(--secondary);
+        }
+
+        .profile-sidebar h2 {
+            margin-bottom: 0.3rem;
+            color: var(--dark);
+        }
+
+        .profile-email {
+            color: var(--neutral);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-member-since {
+            font-size: 0.9rem;
+            color: var(--neutral);
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            border-top: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--neutral);
+        }
+
+        .profile-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-menu-item {
+            padding: 0.8rem 1rem;
+            border: none;
+            background: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--neutral);
+            transition: all 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+
+        .profile-menu-item:hover {
+            background: var(--bg-light);
+            color: var(--primary);
+        }
+
+        .profile-menu-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+        }
+
+        /* Profile Content */
+        .profile-content {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-tab {
+            display: none;
+        }
+
+        .profile-tab.active {
+            display: block;
+        }
+
+        .profile-tab h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+
+        .profile-tab h4 {
+            margin: 1.5rem 0 1rem;
+            color: var(--dark);
+        }
+
+        /* Settings */
+        .settings-group {
+            margin-bottom: 2rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .setting-info p {
+            margin-bottom: 0.2rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .setting-info small {
+            color: var(--neutral);
+        }
+
+        .preference-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Two Factor */
+        .two-factor-status {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-info i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .status-badge.disabled {
+            background: #dee2e6;
+            color: var(--neutral);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* Login History */
+        .login-history {
+            margin-top: 1rem;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .history-item i {
+            width: 30px;
+            color: var(--neutral);
+        }
+
+        .history-details {
+            flex: 1;
+        }
+
+        .history-details p {
+            margin-bottom: 0.2rem;
+            color: var(--dark);
+        }
+
+        .history-details small {
+            color: var(--neutral);
+        }
+
+        .current-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* Data Actions */
+        .data-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .separator {
+            margin: 2rem 0;
+            border: none;
+            border-top: 1px solid #dee2e6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                margin-bottom: 1rem;
+            }
+
+            .data-actions {
+                flex-direction: column;
+            }
+
+            .setting-item {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .setting-info {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .profile-menu-item {
+                justify-content: center;
+            }
+
+            .two-factor-status {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .status-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

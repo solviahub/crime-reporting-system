@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Crime Reporting App</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2 data-i18n="welcome_back">Welcome Back!</h2>
+                <p data-i18n="login_subtitle">Login to access your account and manage reports</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i>
+                        <span data-i18n="email">Email</span>
+                    </label>
+                    <input type="email" id="email" name="email" class="form-control" 
+                           placeholder="Enter your email" required 
+                           data-parsley-type="email"
+                           data-parsley-trigger="blur">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        <span data-i18n="password">Password</span>
+                    </label>
+                    <input type="password" id="password" name="password" class="form-control" 
+                           placeholder="Enter your password" required
+                           data-parsley-minlength="6"
+                           data-parsley-trigger="blur">
+                </div>
+
+                <div class="form-group">
+                    <div class="remember-forgot">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="remember">
+                            <span class="checkmark"></span>
+                            <span data-i18n="remember_me">Remember me</span>
+                        </label>
+                        <a href="forgot-password.html" class="forgot-link" data-i18n="forgot_password">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span data-i18n="login">Login</span>
+                </button>
+
+                <div class="auth-footer">
+                    <p data-i18n="no_account">Don't have an account?
+                        <a href="register.html" data-i18n="sign_up">Sign Up</a>
+                    </p>
+                    
+                </div>
+
+                
+            </form>
+
+            <!-- Demo Credentials (Remove in production) -->
+            <div class="demo-credentials">
+                <p><strong>Demo Credentials:</strong></p>
+                <p>User: user@example.com / password123</p>
+                <p>Admin: admin@example.com / admin123</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer placeholder -->
+     <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+    
+    <!-- Load our custom JavaScript files -->
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <!-- Page specific initialization -->
+    <script>
+        <!-- document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Parsley for form validation
+            $('#loginForm').parsley();
+            
+            // Check if user is already logged in
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                if (user.role === 'admin') {
+                    window.location.href = 'admin/dashboard/overview.html';
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+            }
+        }); -->
+    </script>
+
+    <style>
+        /* Additional login page styles */
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .auth-footer p {
+            margin-bottom: 0.5rem;
+            color: var(--neutral);
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .auth-divider::before {
+            left: 0;
+        }
+
+        .auth-divider::after {
+            right: 0;
+        }
+
+        .auth-divider span {
+            background: var(--white);
+            padding: 0 1rem;
+            color: var(--neutral);
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            margin-top: 1rem;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--white);
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+            color: var(--dark);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: var(--primary);
+        }
+
+        .btn-google i {
+            color: #DB4437;
+        }
+
+        .demo-credentials {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .demo-credentials p {
+            margin-bottom: 0.3rem;
+            color: #856404;
+        }
+
+        /* Parsley validation styles */
+        .parsley-errors-list {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            list-style: none;
+        }
+
+        .parsley-error {
+            border-color: var(--danger) !important;
+        }
+
+        .parsley-success {
+            border-color: var(--success) !important;
+        }
+    </style>
+</body>
+</html>
